@@ -31,11 +31,11 @@ const generateAuthToken = async (user) => {
   return {
     access: {
       token: accessToken,
-      expires: expires,
+      expires: accessTokenExpires,
     },
     refresh: {
       token: refreshToken,
-      expires: expires,
+      expires: refreshToken,
     },
   };
 };

@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const validator = require("validator");
+const mongoose = require('mongoose');
+const validator = require('validator');
 
 const userChema = mongoose.Schema(
   {
@@ -8,14 +8,6 @@ const userChema = mongoose.Schema(
       required: true,
       trim: true,
       minlength: 5,
-      minlength: 8,
-      validate(value) {
-        if (!value.match(/\d/) || !value.match(/[a-zA-Z]/)) {
-          throw new Error(
-            "Password must contain at least one letter and one number"
-          );
-        }
-      },
     },
     email: {
       type: String,
@@ -25,7 +17,7 @@ const userChema = mongoose.Schema(
       lowercase: true,
       validate(value) {
         if (!validator.isEmail(value)) {
-          throw new Error("Invalid Email");
+          throw new Error('Invalid Email');
         }
       },
     },
@@ -36,9 +28,7 @@ const userChema = mongoose.Schema(
       minlength: 8,
       validate(value) {
         if (!value.match(/\d/) || !value.match(/[a-zA-Z]/)) {
-          throw new Error(
-            "Password must contain at least one letter and one number"
-          );
+          throw new Error('Password must contain at least one letter and one number');
         }
       },
     },
@@ -57,4 +47,4 @@ userChema.statics.isEmailTaken = async function (userEmail) {
   return !!user;
 };
 
-module.exports = mongoose.model("User", userChema);
+module.exports = mongoose.model('User', userChema);

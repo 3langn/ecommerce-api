@@ -1,4 +1,4 @@
-const logger = require("../config/logger");
+const logger = require('../config/logger');
 
 const errorHandler = (err, req, res, next) => {
   let { statusCode, message } = err;
@@ -8,7 +8,7 @@ const errorHandler = (err, req, res, next) => {
   const response = {
     message,
     code: statusCode,
-    stack: { ...err.stack },
+    stack: err.stack,
   };
 
   logger.error(err);
