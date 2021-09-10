@@ -1,7 +1,8 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcryptjs');
 
-const userChema = mongoose.Schema(
+const userSChema = mongoose.Schema(
   {
     name: {
       type: String,
@@ -42,9 +43,14 @@ const userChema = mongoose.Schema(
   }
 );
 
-userChema.statics.isEmailTaken = async function (userEmail) {
+userSChema.statics.isEmailTaken = async function (userEmail) {
   const user = await this.findOne({ email: userEmail });
   return !!user;
 };
 
-module.exports = mongoose.model('User', userChema);
+userSChema.methods.isPasswordMatch = function (password) {
+  const user = this;
+  return bcrypt.compare(user.password, password);
+};
+
+module.exports = mongoose.model('User', userSChema);
