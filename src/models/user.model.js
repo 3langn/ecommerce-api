@@ -52,4 +52,9 @@ const userChema = mongoose.Schema(
   }
 );
 
+userChema.statics.isEmailTaken = async function (userEmail) {
+  const user = await this.findOne({ email: userEmail });
+  return !!user;
+};
+
 module.exports = mongoose.model("User", userChema);
