@@ -64,6 +64,3 @@ module.exports = router;
  *         $ref: '#/components/responses/DuplicateEmail'
  */
 
-/**
- * @swagger
- */
