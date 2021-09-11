@@ -19,4 +19,8 @@ module.exports = {
     resetPasswordExpirationMinutes: process.env.JWT_RESET_PASSWORD_EXPIRATION_MINUTES,
     verifyEmailExpirationMinutes: process.env.JWT_VERIFY_EMAIL_EXPIRATION_MINUTES,
   },
+  email: {
+    host: process.env.EMAIL,
+    apikey: process.env.SENDGRID_API_KEY,
+  },
 };

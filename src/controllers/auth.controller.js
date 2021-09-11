@@ -1,7 +1,7 @@
 const httpStatus = require('http-status');
 const logger = require('../config/logger');
 
-const { userService, tokenService, authService } = require('../services/index');
+const { userService, tokenService, authService, emailService } = require('../services/index');
 const catchAsync = require('../utils/catchAsync');
 
 const register = catchAsync(async (req, res) => {
@@ -24,8 +24,23 @@ const logout = catchAsync(async (req, res) => {
   res.status(httpStatus.NO_CONTENT).send();
 });
 
+const forgotPassword = catchAsync(async (req, res) => {
+  const resetPasswordToken = await tokenService.generateAuthToken(req.body.email);
+});
+
+const sendVerificationEmail = catchAsync(async (req, res) => {
+
+  const verifyEmailToken = await tokenService.generateVerifyEmailToken(req.user);
+  await emailService.sendVerificationEmail(req.user.email, verifyEmailToken);
+
+
+  res.status(httpStatus.NO_CONTENT).send();
+});
+
 module.exports = {
   register,
   login,
+  sendVerificationEmail,
+  forgotPassword,
   logout,
 };

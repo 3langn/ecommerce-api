@@ -6,6 +6,8 @@ const routes = require('./routes/v1');
 const { errorHandler } = require('./middleware/error');
 
 const ApiError = require('./utils/ApiError');
+const passport = require('passport');
+const jwtStrategy = require('./config/passport');
 
 const app = express();
 
@@ -14,6 +16,9 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
 app.options('*', cors());
+
+app.use(passport.initialize());
+passport.use(jwtStrategy);
 
 app.use('/v1', routes);
 
