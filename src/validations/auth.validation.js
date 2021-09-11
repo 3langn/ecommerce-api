@@ -22,8 +22,20 @@ const logout = {
   }),
 };
 
+const forgotPassword = {
+  body: Joi.object().keys({
+    email: Joi.string().required(),
+  }),
+};
+
+const sendVerificationEmail = {
+  body: Joi.object().keys({}),
+};
+
 module.exports = {
   register,
   login,
+  forgotPassword,
   logout,
+  sendVerificationEmail,
 };
