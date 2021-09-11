@@ -53,4 +53,10 @@ userSChema.methods.isPasswordMatch = function (password) {
   return bcrypt.compare(user.password, password);
 };
 
+// userSChema.methods.changePassword = function (password) {
+//   const user = this;
+//   user.password = password;
+//   return user.save();
+// };
+
 module.exports = mongoose.model('User', userSChema);
