@@ -30,6 +30,8 @@ const forgotPassword = catchAsync(async (req, res) => {
 
 const sendVerificationEmail = catchAsync(async (req, res) => {
   /**
+   * middleware call
+   *
    * TODO: check user,
    * FIXME: req.body -> req.user
    */
