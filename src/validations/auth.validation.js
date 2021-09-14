@@ -28,8 +28,10 @@ const forgotPassword = {
   }),
 };
 
-const sendVerificationEmail = {
-  body: Joi.object().keys({}),
+const verifyEmail = {
+  query: Joi.object().keys({
+    token: Joi.string().required(),
+  }),
 };
 
 module.exports = {
@@ -37,5 +39,5 @@ module.exports = {
   login,
   forgotPassword,
   logout,
-  sendVerificationEmail,
+  verifyEmail,
 };

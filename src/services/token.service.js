@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 const Token = require('../models/token.model');
 const { tokenTypes } = require('../config/tokens');
+const logger = require('../config/logger');
 
 const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
   const payload = {
@@ -17,6 +18,15 @@ const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
 
 const saveToken = async (token, userId, expires, type, blacklist = false) => {
   const tokenDoc = await Token.create({ token, user: userId, expires: expires.toDate(), type, blacklist });
+  return tokenDoc;
+};
+
+const verifyToken = async (token, type) => {
+  const payload = jwt.verify(token, config.jwt.secret);
+  const tokenDoc = await Token.findOne({ token, type, user: payload.sub });
+  if (!tokenDoc) {
+    throw new Error('Token not found');
+  }
   return tokenDoc;
 };
 
@@ -52,4 +62,5 @@ module.exports = {
   generateToken,
   generateAuthToken,
   generateVerifyEmailToken,
+  verifyToken,
 };

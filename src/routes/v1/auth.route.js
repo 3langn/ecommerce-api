@@ -7,11 +7,10 @@ const router = express.Router();
 
 router.use('/register', validate(authValidation.register), authController.register);
 router.use('/login', validate(authValidation.login), authController.login);
-router.use('/forgot-password', validate(authValidation.forgotPassword));
-
-router.use('/send-verification-email', auth(), authController.sendVerificationEmail);
-
 router.use('/logout', validate(authValidation.logout), authController.logout);
+router.use('/forgot-password', validate(authValidation.forgotPassword));
+router.use('/send-verification-email', auth(), authController.sendVerificationEmail);
+router.use('/verify-email', validate(authValidation.verifyEmail), authController.verifyEmail);
 
 module.exports = router;
 

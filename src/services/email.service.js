@@ -3,7 +3,7 @@ const config = require('../config/config');
 
 sgMail.setApiKey(config.email.apikey);
 const sendVerificationEmail = async (to, token) => {
-  const verificationEmailUrl = `http://localhost:3000/verify-email?token=${token}`;
+  const verificationEmailUrl = `http://localhost:3000/v1/auth/verify-email?token=${token}`;
   const msg = {
     to,
     from: config.email.host, // Use the email address or domain you verified above
