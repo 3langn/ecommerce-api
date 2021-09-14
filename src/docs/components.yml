@@ -1,4 +1,9 @@
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     User:
       type: object
@@ -53,3 +58,30 @@ components:
           example:
             code: 400
             message: Email already taken
+    Unauthorized:
+      description: Unthorized
+      content:
+        application/json:
+          schema:
+            $ref: '#components/schemas/Error'
+          example:
+            code: 401
+            message: Please authenticate
+    NotFound:
+      description: NotFound
+      content:
+        application/json:
+          schema:
+            $ref: '#components/schemas/Error'
+          example:
+            code: 404
+            message: Not Found
+    BadRequest:
+      description: Bad Request
+      content:
+        application/json:
+          scheme:
+            $ref: '#components/schemas/Error'
+          example:
+            code: 400
+            message: Bad Request

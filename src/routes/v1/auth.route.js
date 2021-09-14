@@ -1,17 +1,17 @@
 const express = require('express');
-const validate = require('../../middleware/validate');
 const authValidation = require('../../validations/auth.validation');
 const authController = require('../../controllers/auth.controller');
+const validate = require('../../middleware/validate');
 const auth = require('../../middleware/auth');
 const router = express.Router();
 
-router.use('/register', validate(authValidation.register), authController.register);
-router.use('/login', validate(authValidation.login), authController.login);
-router.use('/forgot-password', validate(authValidation.forgotPassword));
-
-router.use('/send-verification-email', auth(), authController.sendVerificationEmail);
-
-router.use('/logout', validate(authValidation.logout), authController.logout);
+router.post('/register', validate(authValidation.register), authController.register);
+router.post('/login', validate(authValidation.login), authController.login);
+router.post('/logout', validate(authValidation.logout), authController.logout);
+router.post('/forgot-password', validate(authValidation.forgotPassword), authController.forgotPassword);
+router.post('/send-verification-email', auth(), authController.sendVerificationEmail);
+router.post('/verify-email', validate(authValidation.verifyEmail), authController.verifyEmail);
+router.post('/reset-password', validate(authValidation.resetPassword), authController.resetPassword);
 
 module.exports = router;
 
@@ -142,4 +142,78 @@ module.exports = router;
  *         description: No content
  *       "404":
  *         $ref: '#components/responses/Notfound'
+ */
+
+/**
+ * @swagger
+ * /auth/send-verification-email:
+ *   post:
+ *     summary: Send verification email
+ *     description: An email will be sent to verify email.
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       "204":
+ *         description: No content
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
+ *       "400":
+ *         description: Bad Request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             example:
+ *               code: 400
+ *               message: 'Send mail verify failed'
+ */
+
+/**
+ * @swagger
+ * /auth/verify-email:
+ *   post:
+ *      summary: Verify Email
+ *      tags: [Auth]
+ *      parameters:
+ *        - in: query
+ *          name: token
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: The verify email token
+ *      resposes:
+ *        "204":
+ *          description: No content
+ *        "401":
+ *          $ref: '#/components/responses/Unthorized'
+ */
+
+/**
+ * @swagger
+ * /auth/forgot-password:
+ *   post:
+ *      summary: An email will be sent to reset password
+ *      tags: [Auth]
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              required:
+ *                - email
+ *              properties:
+ *                email:
+ *                  type: string
+ *                  format: email
+ *              example:
+ *                email: fake@example.com
+ *      responses:
+ *        "204":
+ *          description: No content
+ *        "404":
+ *          $ref: '#/components/responses/NotFound'
+ *        "400":
+ *          description: 'Send mail reset password failed'
  */

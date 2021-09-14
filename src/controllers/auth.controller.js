@@ -1,5 +1,4 @@
 const httpStatus = require('http-status');
-const logger = require('../config/logger');
 
 const { userService, tokenService, authService, emailService } = require('../services/index');
 const catchAsync = require('../utils/catchAsync');
@@ -25,22 +24,34 @@ const logout = catchAsync(async (req, res) => {
 });
 
 const forgotPassword = catchAsync(async (req, res) => {
-  const resetPasswordToken = await tokenService.generateAuthToken(req.body.email);
+  const resetPasswordToken = await tokenService.generateResetPasswordToken(req.body.email);
+  await emailService.sendResetPasswordEmail(req.body.email, resetPasswordToken);
+
+  res.status(httpStatus.NO_CONTENT).send();
+});
+
+const resetPassword = catchAsync(async (req, res) => {
+  await authService.resetPassword(req.query.token, req.body.password);
+  res.status(httpStatus.NO_CONTENT).send();
 });
 
 const sendVerificationEmail = catchAsync(async (req, res) => {
-
   const verifyEmailToken = await tokenService.generateVerifyEmailToken(req.user);
   await emailService.sendVerificationEmail(req.user.email, verifyEmailToken);
+  res.status(httpStatus.NO_CONTENT).send();
+});
 
-
+const verifyEmail = catchAsync(async (req, res) => {
+  await authService.verifyEmail(req.query.token);
   res.status(httpStatus.NO_CONTENT).send();
 });
 
 module.exports = {
   register,
   login,
-  sendVerificationEmail,
-  forgotPassword,
   logout,
+  forgotPassword,
+  sendVerificationEmail,
+  verifyEmail,
+  resetPassword,
 };

@@ -22,20 +22,32 @@ const logout = {
   }),
 };
 
+const resetPassword = {
+  query: Joi.object().keys({
+    token: Joi.string().required(),
+  }),
+  body: Joi.object().keys({
+    password: Joi.string().required(),
+  }),
+};
+
 const forgotPassword = {
   body: Joi.object().keys({
     email: Joi.string().required(),
   }),
 };
 
-const sendVerificationEmail = {
-  body: Joi.object().keys({}),
+const verifyEmail = {
+  query: Joi.object().keys({
+    token: Joi.string().required(),
+  }),
 };
 
 module.exports = {
   register,
   login,
-  forgotPassword,
   logout,
-  sendVerificationEmail,
+  forgotPassword,
+  resetPassword,
+  verifyEmail,
 };

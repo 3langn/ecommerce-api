@@ -8,6 +8,7 @@ const { errorHandler } = require('./middleware/error');
 const ApiError = require('./utils/ApiError');
 const passport = require('passport');
 const jwtStrategy = require('./config/passport');
+const { application } = require('express');
 
 const app = express();
 
