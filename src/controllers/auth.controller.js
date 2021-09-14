@@ -29,12 +29,8 @@ const forgotPassword = catchAsync(async (req, res) => {
 });
 
 const sendVerificationEmail = catchAsync(async (req, res) => {
-  /**
-   * TODO: check user,
-   * FIXME: req.body -> req.user
-   */
-  const verifyEmailToken = await tokenService.generateVerifyEmailToken(req.body.user);
-  await emailService.sendVerificationEmail(req.body.user.email, verifyEmailToken);
+  const verifyEmailToken = await tokenService.generateVerifyEmailToken(req.user);
+  await emailService.sendVerificationEmail(req.user.email, verifyEmailToken);
 
   res.status(httpStatus.NO_CONTENT).send();
 });

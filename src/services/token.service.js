@@ -35,7 +35,7 @@ const generateAuthToken = async (user) => {
     },
     refresh: {
       token: refreshToken,
-      expires: refreshToken,
+      expires: refreshTokenExpires,
     },
   };
 };

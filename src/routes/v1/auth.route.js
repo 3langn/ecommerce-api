@@ -2,13 +2,13 @@ const express = require('express');
 const validate = require('../../middleware/validate');
 const authValidation = require('../../validations/auth.validation');
 const authController = require('../../controllers/auth.controller');
-
+const auth = require('../../middleware/auth');
 const router = express.Router();
 
 router.use('/register', validate(authValidation.register), authController.register);
 router.use('/login', validate(authValidation.login), authController.login);
 router.use('/forgot-password', validate(authValidation.forgotPassword));
-router.use('/send-verification-email', authController.sendVerificationEmail);
+router.use('/send-verification-email', auth(), authController.sendVerificationEmail);
 router.use('/logout', validate(authValidation.logout), authController.logout);
 
 module.exports = router;

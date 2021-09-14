@@ -49,7 +49,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#components/schema/Error'
+            $ref: '#components/schemas/Error'
           example:
             code: 400
             message: Email already taken
