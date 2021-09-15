@@ -29,6 +29,8 @@ const verifyToken = async (token, type) => {
   if (!tokenDoc) {
     throw new Error('Token not found');
   }
+  logger.debug(tokenDoc);
+
   return tokenDoc;
 };
 
