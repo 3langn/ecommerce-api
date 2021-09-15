@@ -6,6 +6,7 @@ const userService = require('./user.service');
 const ApiError = require('../utils/ApiError');
 const Token = require('../models/token.model');
 const logger = require('../config/logger');
+const { TokenExpiredError } = require('jsonwebtoken');
 
 const loginUserWithEmailAndPassword = async (email, password) => {
   const user = await userService.getUserByEmail(email);
@@ -38,7 +39,6 @@ const verifyEmail = async (verifyToken) => {
     await Token.deleteMany({ user: user.id, type: tokenTypes.VERIFY_EMAIL });
     await userService.updateUserById(verifyTokenDoc.user, { isEmailVerified: true });
   } catch (error) {
-    logger.error(error);
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Email verification failed');
   }
 };
@@ -53,8 +53,26 @@ const resetPassword = async (resetPasswordToken, newPassword) => {
     await userService.updateUserById(user.id, { password: newPassword });
     await Token.deleteMany({ type: tokenTypes.RESET_PASSWORD, user: user.id });
   } catch (error) {
-    logger.error(error);
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Password reset failed');
+    let message = 'Password reset failed';
+    if (TokenExpiredError) {
+      message = 'Token expired';
+    }
+    throw new ApiError(httpStatus.UNAUTHORIZED, message);
+  }
+};
+
+const refreshAuth = async (refreshToken) => {
+  try {
+    const refreshTokenDoc = await tokenService.verifyToken(refreshToken);
+    const user = await userService.getUserById(refreshTokenDoc.user);
+    if (!user) {
+      throw Error();
+    }
+    await refreshTokenDoc.remove();
+    return tokenService.generateAuthToken(user);
+  } catch (error) {
+    let message = 'Unauthrized';
+    throw new ApiError(httpStatus.UNAUTHORIZED, message);
   }
 };
 
@@ -63,4 +81,5 @@ module.exports = {
   logout,
   resetPassword,
   verifyEmail,
+  refreshAuth,
 };

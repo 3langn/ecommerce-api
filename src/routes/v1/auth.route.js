@@ -12,7 +12,7 @@ router.post('/forgot-password', validate(authValidation.forgotPassword), authCon
 router.post('/send-verification-email', auth(), authController.sendVerificationEmail);
 router.post('/verify-email', validate(authValidation.verifyEmail), authController.verifyEmail);
 router.use('/reset-password', validate(authValidation.resetPassword), authController.resetPassword);
-router.post('/refresh-token', validate(authValidation.refreshToken));
+router.post('/refresh-tokens', validate(authValidation.refreshToken), authController.refreshTokens);
 module.exports = router;
 
 /**
@@ -270,7 +270,40 @@ module.exports = router;
  *            application/json:
  *              schema:
  *                $ref: '#/components/responses/Error'
- *              example:
- *                code: 401
- *                message: Password reset failed
+ *              examples:
+ *                resetPasswordFail:
+ *                  code: 401
+ *                  message: Password reset failed
+ *                tokenExpired:
+ *                  code: 401
+ *                  message: Token exprired
+ */
+/**
+ * @swagger
+ * /auth/refresh-tokens:
+ *   post:
+ *     summary: Refresh auth tokens
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - refreshToken
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *             example:
+ *               refreshToken: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1ZWJhYzUzNDk1NGI1NDEzOTgwNmMxMTIiLCJpYXQiOjE1ODkyOTg0ODQsImV4cCI6MTU4OTMwMDI4NH0.m1U63blB0MLej_WfB7yC2FTMnCziif9X8yzwDEfJXAg
+ *     responses:
+ *       "200":
+ *         description: OK
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/AuthTokens'
+ *       "401":
+ *         $ref: '#/components/responses/Unauthorized'
  */
