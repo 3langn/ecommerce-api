@@ -2,6 +2,7 @@ const httpStatus = require('http-status');
 
 const { tokenTypes } = require('../config/tokens');
 const tokenService = require('./token.service');
+const userService = require('./user.service');
 const ApiError = require('../utils/ApiError');
 const Token = require('../models/token.model');
 const logger = require('../config/logger');
@@ -37,6 +38,7 @@ const verifyEmail = async (verifyToken) => {
     await Token.deleteMany({ user: user.id, type: tokenTypes.VERIFY_EMAIL });
     await userService.updateUserById(verifyTokenDoc.user, { isEmailVerified: true });
   } catch (error) {
+    logger.error(error);
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Email verification failed');
   }
 };
@@ -49,8 +51,9 @@ const resetPassword = async (resetPasswordToken, newPassword) => {
       throw new Error();
     }
     await userService.updateUserById(user.id, { password: newPassword });
-    await tokenModel.deleteMany({ type: tokenTypes.RESET_PASSWORD, user: user.id });
+    await Token.deleteMany({ type: tokenTypes.RESET_PASSWORD, user: user.id });
   } catch (error) {
+    logger.error(error);
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Password reset failed');
   }
 };

@@ -3,7 +3,7 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 const { roles } = require('../config/roles');
 
-const userSChema = mongoose.Schema(
+const userSchema = mongoose.Schema(
   {
     name: {
       type: String,
@@ -49,20 +49,21 @@ const userSChema = mongoose.Schema(
   }
 );
 
-userSChema.statics.isEmailTaken = async function (userEmail) {
+userSchema.statics.isEmailTaken = async function (userEmail) {
   const user = await this.findOne({ email: userEmail });
   return !!user;
 };
 
-userSChema.methods.isPasswordMatch = function (password) {
+userSchema.methods.isPasswordMatch = function (password) {
   const user = this;
   return bcrypt.compare(user.password, password);
 };
+userSchema.pre('save', async function (next) {
+  const user = this;
+  if (user.isModified('password')) {
+    user.password = await bcrypt.hash(user.password, 8);
+  }
+  next();
+});
 
-// userSChema.methods.changePassword = function (password) {
-//   const user = this;
-//   user.password = password;
-//   return user.save();
-// };
-
-module.exports = mongoose.model('User', userSChema);
+module.exports = mongoose.model('User', userSchema);
