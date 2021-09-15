@@ -6,18 +6,22 @@ const ApiError = require('../utils/ApiError');
 
 sgMail.setApiKey(config.email.apikey);
 const sendVerificationEmail = async (to, token) => {
-  const verificationEmailUrl = `http://localhost:3000/v1/auth/verify-email?token=${token}`;
-  const msg = {
-    to,
-    from: config.email.host, // Use the email address or domain you verified above
-    subject: 'Please Verify Your Email',
-    html: `<strong>Let's verify your email.</strong><br>
+  try {
+    const verificationEmailUrl = `http://localhost:3000/v1/auth/verify-email?token=${token}`;
+    const msg = {
+      to,
+      from: config.email.host, // Use the email address or domain you verified above
+      subject: 'Please Verify Your Email',
+      html: `<strong>Let's verify your email.</strong><br>
       ${to}<br>
       <a>${verificationEmailUrl}</a><br>
       Your link is active for ${config.jwt.verifyEmailExpirationMinutes} minutes. After that, you will need to resend the verification email
       `,
-  };
-  sgMail.send(msg);
+    };
+    await sgMail.send(msg);
+  } catch (error) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Send mail verify failed');
+  }
 };
 const sendResetPasswordEmail = async (to, token) => {
   try {

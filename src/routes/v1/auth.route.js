@@ -185,8 +185,15 @@ module.exports = router;
  *      resposes:
  *        "204":
  *          description: No content
- *        "401":
- *          $ref: '#/components/responses/Unthorized'
+ *        "400":
+ *          description: Send mail verify failed
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/responses/Error'
+ *              example:
+ *                code: 400
+ *                message: Send mail verify failed
  */
 
 /**
@@ -215,5 +222,55 @@ module.exports = router;
  *        "404":
  *          $ref: '#/components/responses/NotFound'
  *        "400":
- *          description: 'Send mail reset password failed'
+ *          description: Send mail reset password failed
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/responses/Error'
+ *              example:
+ *                code: 400
+ *                message: Send mail reset password failed
+ */
+
+/**
+ * @swagger
+ * /auth/reset-password:
+ *   post:
+ *      summary: Reset password
+ *      tags: [Auth]
+ *      parameters:
+ *        - in: query
+ *          name: token
+ *          required: true
+ *          schema:
+ *            type: string
+ *          description: The reset password token
+ *      requestBody:
+ *        required: true
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: object
+ *              required:
+ *                - password:
+ *              properties:
+ *                password:
+ *                  type: string
+ *                  format: password
+ *                  minLength: 8
+ *                  description: At least one number and one letter
+ *              example:
+ *                password: password1
+ *      responses:
+ *        "204":
+ *          description: No content
+ *        "401":
+ *          description: Password reset failed
+ *          content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/responses/Error'
+ *              example:
+ *                code: 401
+ *                message: Password reset failed
  */
