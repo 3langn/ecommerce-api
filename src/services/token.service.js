@@ -2,6 +2,7 @@ const moment = require('moment');
 const jwt = require('jsonwebtoken');
 
 const config = require('../config/config');
+const logger = require('../config/logger');
 const Token = require('../models/token.model');
 const { tokenTypes } = require('../config/tokens');
 const User = require('../models/user.model');

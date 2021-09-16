@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
+const { toJSON, paginate } = require('./plugins');
+
 const { roles } = require('../config/roles');
 
 const userSchema = mongoose.Schema(
@@ -48,6 +50,9 @@ const userSchema = mongoose.Schema(
     timestamps: true,
   }
 );
+
+userSchema.plugin(toJSON);
+userSchema.plugin(paginate);
 
 userSchema.statics.isEmailTaken = async function (userEmail) {
   const user = await this.findOne({ email: userEmail });
