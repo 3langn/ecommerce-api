@@ -12,14 +12,24 @@ const findById = async (productId) => {
 };
 
 const deleteProduct = async (productId) => {
-  const product = await Product.findById(productId);
-  if (!product) {
-    throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
+  try {
+    const product = await findById(productId);
+    product.remove();
+  } catch (error) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Can't delete product");
   }
-  product.remove();
+};
+
+const editProduct = async (productId, update) => {
+  try {
+    await Product.findByIdAndUpdate(productId, update);
+  } catch (error) {
+    throw new ApiError(httpStatus.BAD_REQUEST, "Can't update product");
+  }
 };
 
 export default {
   findById,
   deleteProduct,
+  editProduct,
 };

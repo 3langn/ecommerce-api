@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { paginate, toJSON } from './plugins/index.js';
 
 const productSchema = mongoose.Schema(
   {
@@ -40,10 +41,18 @@ const productSchema = mongoose.Schema(
       type: Number,
       require: true,
     },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      require: true,
+    },
   },
   {
     timestamp: true,
   }
 );
+
+productSchema.plugin(toJSON);
+productSchema.plugin(paginate);
 
 export default mongoose.model('Product', productSchema);
