@@ -1,8 +1,8 @@
-const express = require('express');
-const authValidation = require('../../validations/auth.validation');
-const authController = require('../../controllers/auth.controller');
-const validate = require('../../middleware/validate');
-const auth = require('../../middleware/auth');
+import express from 'express';
+import authValidation from '../../validations/auth.validation.js';
+import authController from '../../controllers/auth.controller.js';
+import validate from '../../middleware/validate.js';
+import auth from '../../middleware/auth.js';
 const router = express.Router();
 
 router.post('/register', validate(authValidation.register), authController.register);
@@ -13,7 +13,7 @@ router.post('/send-verification-email', auth(), authController.sendVerificationE
 router.post('/verify-email', validate(authValidation.verifyEmail), authController.verifyEmail);
 router.use('/reset-password', validate(authValidation.resetPassword), authController.resetPassword);
 router.post('/refresh-tokens', validate(authValidation.refreshToken), authController.refreshTokens);
-module.exports = router;
+export default router;
 
 /**
  * @swagger

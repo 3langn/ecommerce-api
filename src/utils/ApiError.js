@@ -1,4 +1,4 @@
-const logger = require('../config/logger');
+import logger from '../config/logger.js';
 
 class ApiError extends Error {
   constructor(statusCode, message, isOperational = true, stack = '') {
@@ -13,4 +13,4 @@ class ApiError extends Error {
   }
 }
 
-module.exports = ApiError;
+export default ApiError;

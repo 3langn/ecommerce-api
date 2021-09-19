@@ -1,8 +1,8 @@
-const sgMail = require('@sendgrid/mail');
-const httpStatus = require('http-status');
-const config = require('../config/config');
-const logger = require('../config/logger');
-const ApiError = require('../utils/ApiError');
+import sgMail from '@sendgrid/mail';
+import httpStatus from 'http-status';
+import config from '../config/config.js';
+import logger from '../config/logger.js';
+import ApiError from '../utils/ApiError.js';
 
 sgMail.setApiKey(config.email.apikey);
 const sendVerificationEmail = async (to, token) => {
@@ -43,7 +43,4 @@ If you did not request any password resets, then ignore this email.`;
     throw new ApiError(httpStatus.BAD_REQUEST, 'Send mail reset password failed');
   }
 };
-module.exports = {
-  sendVerificationEmail,
-  sendResetPasswordEmail,
-};
+export default { sendVerificationEmail, sendResetPasswordEmail };

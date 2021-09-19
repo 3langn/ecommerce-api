@@ -1,8 +1,7 @@
-const httpStatus = require('http-status');
-const logger = require('../config/logger');
+import httpStatus from 'http-status';
 
-const { userService, tokenService, authService, emailService } = require('../services/index');
-const catchAsync = require('../utils/catchAsync');
+import { userService, tokenService, authService, emailService } from '../services/index.js';
+import catchAsync from '../utils/catchAsync.js';
 
 const register = catchAsync(async (req, res) => {
   const user = await userService.createUser(req.body);
@@ -51,13 +50,4 @@ const refreshTokens = catchAsync(async (req, res) => {
   res.send({ ...tokens });
 });
 
-module.exports = {
-  register,
-  login,
-  logout,
-  forgotPassword,
-  sendVerificationEmail,
-  verifyEmail,
-  resetPassword,
-  refreshTokens,
-};
+export default { register, login, logout, forgotPassword, sendVerificationEmail, verifyEmail, resetPassword, refreshTokens };

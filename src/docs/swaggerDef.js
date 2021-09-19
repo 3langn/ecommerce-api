@@ -1,11 +1,10 @@
-const { version } = require('../../package.json');
-const config = require('../config/config');
+import config from '../config/config.js';
 
 const swaggerDef = {
   openapi: '3.0.0',
   info: {
     title: 'Sub Facebook API documentation',
-    version,
+    version: process.env.npm_package_version,
   },
   servers: [
     {
@@ -14,4 +13,4 @@ const swaggerDef = {
   ],
 };
 
-module.exports = swaggerDef;
+export default swaggerDef;

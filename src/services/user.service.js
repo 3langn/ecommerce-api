@@ -1,6 +1,6 @@
-const httpStatus = require('http-status');
-const User = require('../models/user.model');
-const ApiError = require('../utils/ApiError');
+import httpStatus from 'http-status';
+import User from '../models/user.model.js';
+import ApiError from '../utils/ApiError.js';
 
 const createUser = async (userBody) => {
   if (await User.isEmailTaken(userBody.email)) {
@@ -31,9 +31,4 @@ const updateUserById = async (userId, updateBody) => {
   return user;
 };
 
-module.exports = {
-  createUser,
-  getUserByEmail,
-  updateUserById,
-  getUserById,
-};
+export default { createUser, getUserByEmail, updateUserById, getUserById };

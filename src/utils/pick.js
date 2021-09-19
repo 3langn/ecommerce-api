@@ -15,4 +15,4 @@ const pick = (object, keys) => {
   }, {});
 };
 
-module.exports = pick;
+export default pick;

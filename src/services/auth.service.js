@@ -1,12 +1,13 @@
-const httpStatus = require('http-status');
+import httpStatus from 'http-status';
 
-const { tokenTypes } = require('../config/tokens');
-const tokenService = require('./token.service');
-const userService = require('./user.service');
-const ApiError = require('../utils/ApiError');
-const Token = require('../models/token.model');
-const logger = require('../config/logger');
-const { TokenExpiredError } = require('jsonwebtoken');
+import { tokenTypes } from '../config/tokens.js';
+import tokenService from './token.service.js';
+import userService from './user.service.js';
+import ApiError from '../utils/ApiError.js';
+import Token from '../models/token.model.js';
+import logger from '../config/logger.js';
+import pkg from 'jsonwebtoken';
+const { TokenExpiredError } = pkg;
 
 const loginUserWithEmailAndPassword = async (email, password) => {
   const user = await userService.getUserByEmail(email);
@@ -76,10 +77,4 @@ const refreshAuth = async (refreshToken) => {
   }
 };
 
-module.exports = {
-  loginUserWithEmailAndPassword,
-  logout,
-  resetPassword,
-  verifyEmail,
-  refreshAuth,
-};
+export default { loginUserWithEmailAndPassword, logout, resetPassword, verifyEmail, refreshAuth };

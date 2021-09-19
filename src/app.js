@@ -1,13 +1,13 @@
-const express = require('express');
-const cors = require('cors');
-const httpStatus = require('http-status');
+import express from 'express';
+import cors from 'cors';
+import httpStatus from 'http-status';
 
-const routes = require('./routes/v1');
-const { errorHandler } = require('./middleware/error');
+import routes from './routes/v1/index.js';
+import { errorHandler } from './middleware/error.js';
 
-const ApiError = require('./utils/ApiError');
-const passport = require('passport');
-const jwtStrategy = require('./config/passport');
+import ApiError from './utils/ApiError.js';
+import passport from 'passport';
+import jwtStrategy from './config/passport.js';
 
 const app = express();
 
@@ -28,4 +28,4 @@ app.use((req, res, next) => {
 
 app.use(errorHandler);
 
-module.exports = app;
+export default app;

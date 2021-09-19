@@ -1,7 +1,7 @@
-const Joi = require('joi');
-const httpStatus = require('http-status');
-const pick = require('../utils/pick');
-const ApiError = require('../utils/ApiError');
+import Joi from 'joi';
+import httpStatus from 'http-status';
+import pick from '../utils/pick.js';
+import ApiError from '../utils/ApiError.js';
 
 const validate = (schema) => (req, res, next) => {
   //Bỏ các key bên ngoài
@@ -22,4 +22,4 @@ const validate = (schema) => (req, res, next) => {
   return next();
 };
 
-module.exports = validate;
+export default validate;

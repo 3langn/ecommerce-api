@@ -1,13 +1,13 @@
-const moment = require('moment');
-const jwt = require('jsonwebtoken');
+import moment from 'moment';
+import jwt from 'jsonwebtoken';
 
-const config = require('../config/config');
-const logger = require('../config/logger');
-const Token = require('../models/token.model');
-const { tokenTypes } = require('../config/tokens');
-const User = require('../models/user.model');
-const ApiError = require('../utils/ApiError');
-const httpStatus = require('http-status');
+import config from '../config/config.js';
+import logger from '../config/logger.js';
+import Token from '../models/token.model.js';
+import { tokenTypes } from '../config/tokens.js';
+import User from '../models/user.model.js';
+import ApiError from '../utils/ApiError.js';
+import httpStatus from 'http-status';
 
 const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
   const payload = {
@@ -72,10 +72,4 @@ const generateVerifyEmailToken = async (user) => {
   return verifyEmailToken;
 };
 
-module.exports = {
-  generateToken,
-  generateAuthToken,
-  generateVerifyEmailToken,
-  verifyToken,
-  generateResetPasswordToken,
-};
+export default { generateToken, generateAuthToken, generateVerifyEmailToken, verifyToken, generateResetPasswordToken };

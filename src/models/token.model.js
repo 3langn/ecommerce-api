@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const { tokenTypes } = require("../config/tokens");
+import mongoose from 'mongoose';
+import { tokenTypes } from '../config/tokens.js';
 
 const tokenSchema = mongoose.Schema(
   {
@@ -10,16 +10,12 @@ const tokenSchema = mongoose.Schema(
     },
     user: {
       type: mongoose.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
     type: {
       type: String,
-      enum: [
-        tokenTypes.REFRESH,
-        tokenTypes.RESET_PASSWORD,
-        tokenTypes.VERIFY_EMAIL,
-      ],
+      enum: [tokenTypes.REFRESH, tokenTypes.RESET_PASSWORD, tokenTypes.VERIFY_EMAIL],
       required: true,
     },
     expires: {
@@ -36,4 +32,4 @@ const tokenSchema = mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Token", tokenSchema);
+export default mongoose.model('Token', tokenSchema);

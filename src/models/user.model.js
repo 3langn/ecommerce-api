@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
-const validator = require('validator');
-const bcrypt = require('bcryptjs');
-const { toJSON, paginate } = require('./plugins');
+import mongoose from 'mongoose';
+import validator from 'validator';
+import bcrypt from 'bcryptjs';
+import { toJSON, paginate } from './plugins/index.js';
 
-const { roles } = require('../config/roles');
+import { roles } from '../config/roles.js';
 
 const userSchema = mongoose.Schema(
   {
@@ -71,4 +71,4 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-module.exports = mongoose.model('User', userSchema);
+export default mongoose.model('User', userSchema);

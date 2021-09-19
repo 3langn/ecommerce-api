@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
-const app = require('./app');
+import mongoose from 'mongoose';
+import app from './app.js';
 
-const config = require('./config/config');
-const logger = require('./config/logger');
+import config from './config/config.js';
+import logger from './config/logger.js';
 
 logger.info(config.mongoose.url);
 mongoose
