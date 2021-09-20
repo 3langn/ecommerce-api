@@ -1,11 +1,6 @@
 import dotenv from 'dotenv';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
-const pathToUpperBarFile = new URL('../../.env', import.meta.url).pathname;
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
-//dotenv.config({ path: path.join(__dirname, '../../.env') });
-dotenv.config({ path: pathToUpperBarFile });
+import logger from '../config/logger.js';
+dotenv.config();
 
 export default {
   port: process.env.PORT,

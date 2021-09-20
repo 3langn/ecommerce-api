@@ -1,8 +1,5 @@
 import mongoose from 'mongoose';
-<<<<<<< HEAD
-=======
 import { toJSON } from './plugins/index.js';
->>>>>>> cart
 
 const cartItemSchema = mongoose.Schema({
   productId: {
@@ -15,10 +12,7 @@ const cartItemSchema = mongoose.Schema({
     required: true,
   },
 });
-<<<<<<< HEAD
-=======
 cartItemSchema.plugin(toJSON);
->>>>>>> cart
 const cartItemModel = mongoose.model('CartItem', cartItemSchema);
 
 const cartSchema = mongoose.Schema({
@@ -29,10 +23,6 @@ const cartSchema = mongoose.Schema({
     required: true,
   },
 });
-<<<<<<< HEAD
-
-=======
 cartItemSchema.plugin(toJSON);
->>>>>>> cart
 const cartModel = mongoose.model('Cart', cartSchema);
 export { cartItemModel, cartModel };
