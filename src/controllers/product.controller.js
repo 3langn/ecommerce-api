@@ -1,7 +1,7 @@
 import httpStatus from 'http-status';
+import logger from '../config/logger.js';
 import Product from '../models/product.model.js';
 import productService from '../services/product.service.js';
-import ApiError from '../utils/ApiError.js';
 import catchAsync from '../utils/catchAsync.js';
 
 const addProduct = catchAsync(async (req, res) => {
@@ -22,17 +22,25 @@ const getProduct = catchAsync(async (req, res) => {
 
 const deleteProduct = catchAsync(async (req, res) => {
   await productService.deleteProduct(req.params.id);
-  res.status(httpStatus.NO_CONTENT).send();
+  res.send({ message: 'Product has been deleted successfully!' });
 });
 
 const editProduct = catchAsync(async (req, res) => {
-  await productService.editProduct(req.params.id, req.body.product);
-  res.status(httpStatus.NO_CONTENT).send();
+  const product = await Product.findById(req.params.id);
+  if (!product) {
+    throw new ApiError(httpStatus.NOT_FOUND, 'Product not found');
+  }
+  if (product.userId != req.user.id) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Not authorized!');
+  }
+  await Product.findByIdAndUpdate(product.id, update);
+  res.send({ message: 'Product has been updated successfully!' });
 });
+
 export default {
   addProduct,
   getProducts,
   getProduct,
-  editProduct,
   deleteProduct,
+  editProduct,
 };

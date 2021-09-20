@@ -16,20 +16,11 @@ const deleteProduct = async (productId) => {
     const product = await findById(productId);
     product.remove();
   } catch (error) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Can't delete product");
-  }
-};
-
-const editProduct = async (productId, update) => {
-  try {
-    await Product.findByIdAndUpdate(productId, update);
-  } catch (error) {
-    throw new ApiError(httpStatus.BAD_REQUEST, "Can't update product");
+    throw error;
   }
 };
 
 export default {
   findById,
   deleteProduct,
-  editProduct,
 };
