@@ -11,7 +11,7 @@ const addToCart = async (userId, cartItem) => {
       return;
     }
     const cartProductIndex = cart.cartItems.findIndex((product) => {
-      return product.productId.toString() === cartItem.productId;
+      return product.product.toString() === cartItem.productId;
     });
     if (cartProductIndex >= 0) {
       cart.cartItems[cartProductIndex].quantity += cartItem.quantity;
@@ -30,13 +30,13 @@ const addToCart = async (userId, cartItem) => {
 
 const getCart = async (userId) => {
   try {
-    const cart = await cartModel.findOne({ userId }).populate({ path: 'cartItems.productId' });
+    const cart = await cartModel.findOne({ userId }).populate({ path: 'cartItems.product' });
     if (!cart) {
       throw new ApiError(httpStatus.NOT_FOUND, 'Cart is empty');
     }
     return cart;
   } catch (error) {
-    logger.debug(error);
+    logger.error(error);
     if (!error.statusCode) {
       throw new ApiError(httpStatus.BAD_REQUEST, "Can't get cart");
     }
@@ -61,7 +61,8 @@ const updateCart = async (userId, productId, quantity) => {
     }
     await cart.save();
   } catch (error) {
-    logger.debug(error);
+    logger.error(error);
+
     if (!error.statusCode) {
       throw new ApiError(httpStatus.BAD_REQUEST, "Can't update cart");
     }

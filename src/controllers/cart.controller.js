@@ -16,10 +16,10 @@ const getCart = catchAsync(async (req, res) => {
 
 const updateCart = catchAsync(async (req, res) => {
   const userId = req.user.id;
-  const productId = req.body.productId;
+  const productId = req.body.product;
   const quantity = req.body.quantity;
 
-  cartService.updateCart(userId, productId, quantity);
+  await cartService.updateCart(userId, productId, quantity);
   res.status(httpStatus.NO_CONTENT).send();
 });
 
