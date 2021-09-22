@@ -25,7 +25,7 @@ const createOrder = async (userId, cartItems) => {
         total: cartItems[i].total,
       };
     });
-
+    cart.remove();
     return await orderModel.create({ orderItems, user: userId });
   } catch (error) {
     logger.error(error);
