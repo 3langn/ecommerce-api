@@ -20,6 +20,38 @@ components:
         email: test@gmail.com
         name: test name
 
+    Product:
+      type: object
+      properties:
+        name:
+          type: string
+        image:
+          type: string
+        brand:
+          type: string
+        category:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        countInStock:
+          type: number
+        rating:
+          type: number
+        numReviews:
+          type: number
+      example:
+        name: May Bay
+        image: Quynh
+        brand: Nguyen
+        category: Nguyen,
+        description: Boing-202
+        price: 222,
+        countInStock: 3
+        rating: 5,
+        numReviews: 10
+
     Token:
       type: object
       properties:
@@ -68,7 +100,7 @@ components:
             code: 401
             message: Please authenticate
     NotFound:
-      description: NotFound
+      description: Not Found
       content:
         application/json:
           schema:

@@ -141,7 +141,7 @@ export default router;
  *       "204":
  *         description: No content
  *       "404":
- *         $ref: '#components/responses/Notfound'
+ *         $ref: '#components/responses/NotFound'
  */
 
 /**
@@ -182,7 +182,7 @@ export default router;
  *          schema:
  *            type: string
  *          description: The verify email token
- *      resposes:
+ *      responses:
  *        "204":
  *          description: No content
  *        "400":

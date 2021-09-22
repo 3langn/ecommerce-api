@@ -2,12 +2,17 @@ import httpStatus from 'http-status';
 import logger from '../config/logger.js';
 import Product from '../models/product.model.js';
 import productService from '../services/product.service.js';
+import ApiError from '../utils/ApiError.js';
 import catchAsync from '../utils/catchAsync.js';
 
 const addProduct = catchAsync(async (req, res) => {
-  const product = new Product({ ...req.body.product, userId: req.user.id });
-  await product.save();
-  res.status(httpStatus.CREATED).send({ product, message: 'Product has been added successfully!' });
+  try {
+    const product = new Product({ ...req.body, userId: req.user.id });
+    await product.save();
+    res.status(httpStatus.CREATED).send({ product, message: 'Product has been added successfully!' });
+  } catch (error) {
+    throw new ApiError(httpStatus.BAD_REQUEST, 'Create product failed');
+  }
 });
 
 const getProducts = catchAsync(async (req, res) => {
