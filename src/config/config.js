@@ -1,5 +1,4 @@
 import dotenv from 'dotenv';
-import logger from '../config/logger.js';
 dotenv.config();
 
 export default {
