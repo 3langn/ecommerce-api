@@ -55,7 +55,8 @@ components:
     Cart:
       type: object
       properties:
-
+        cartItems:
+          type: array
     Token:
       type: object
       properties:
