@@ -33,6 +33,19 @@ const createOrder = async (userId, cartItems) => {
   }
 };
 
+const deleteOrder = async (user, orderId) => {
+  try {
+    const order = await orderModel.findOneAndRemove({ user, _id: orderId });
+    if (!order) {
+      throw Error();
+    }
+  } catch (error) {
+    logger.error(error);
+    throw new ApiError(httpStatus.BAD_REQUEST, "Can't delete product");
+  }
+};
+
 export default {
   createOrder,
+  deleteOrder,
 };

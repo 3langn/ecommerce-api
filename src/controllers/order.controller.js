@@ -28,17 +28,9 @@ const getOrder = catchAsync(async (req, res) => {
 });
 
 const deleteOrder = catchAsync(async (req, res) => {
-  try {
-    const user = req.user;
-    const orderId = req.params.id;
-    const order = await orderModel.findOneAndRemove({ user, _id: orderId });
-    if (!order) {
-      throw Error();
-    }
-  } catch (error) {
-    logger.error(error);
-    throw new ApiError(httpStatus.BAD_REQUEST, "Can't delete product");
-  }
+  const user = req.user;
+  const orderId = req.params.id;
+  await orderService.deleteOrder(user, orderId);
 
   res.status(httpStatus.NO_CONTENT).send();
 });
