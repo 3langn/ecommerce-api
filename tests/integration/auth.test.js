@@ -7,7 +7,7 @@ import bcrypt from 'bcryptjs';
 import auth from '../../src/middleware/auth.js';
 import app from '../../src/app.js';
 import config from '../../src/config/config.js';
-import { tokenService, emailService } from '../../src/services';
+import { tokenService, emailService } from '../../src/services/index.js';
 import ApiError from '../../src/utils/ApiError.js';
 import setupTestDB from '../utils/setupTestDB';
 import { User, Token } from '../../src/models';
@@ -17,7 +17,6 @@ import { userOne, userTwo, admin, insertUsers } from '../fixtures/user.fixture.j
 import { userOneAccessToken, adminAccessToken } from '../fixtures/token.fixture.js';
 import { jest } from '@jest/globals';
 import logger from '../../src/config/logger.js';
-
 setupTestDB();
 describe('Auth routes', () => {
   describe('POST /v1/auth/register', () => {
@@ -129,40 +128,40 @@ describe('Auth routes', () => {
     });
   });
 
-  //   describe('POST /v1/auth/logout', () => {
-  //     test('should return 204 if refresh token is valid', async () => {
-  //       await insertUsers([userOne]);
-  //       const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
-  //       const refreshToken = tokenService.generateToken(userOne._id, expires, tokenTypes.REFRESH);
-  //       await tokenService.saveToken(refreshToken, userOne._id, expires, tokenTypes.REFRESH);
+  describe('POST /v1/auth/logout', () => {
+    test('should return 204 if refresh token is valid', async () => {
+      await insertUsers([userOne]);
+      const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
+      const refreshToken = tokenService.generateToken(userOne._id, expires, tokenTypes.REFRESH);
+      await tokenService.saveToken(refreshToken, userOne._id, expires, tokenTypes.REFRESH);
 
-  //       await request(app).post('/v1/auth/logout').send({ refreshToken }).expect(httpStatus.NO_CONTENT);
+      await request(app).post('/v1/auth/logout').send({ refreshToken }).expect(httpStatus.NO_CONTENT);
 
-  //       const dbRefreshTokenDoc = await Token.findOne({ token: refreshToken });
-  //       expect(dbRefreshTokenDoc).toBe(null);
-  //     });
+      const dbRefreshTokenDoc = await Token.findOne({ token: refreshToken });
+      expect(dbRefreshTokenDoc).toBe(null);
+    });
 
-  //     test('should return 400 error if refresh token is missing from request body', async () => {
-  //       await request(app).post('/v1/auth/logout').send().expect(httpStatus.BAD_REQUEST);
-  //     });
+    test('should return 400 error if refresh token is missing from request body', async () => {
+      await request(app).post('/v1/auth/logout').send().expect(httpStatus.BAD_REQUEST);
+    });
 
-  //     test('should return 404 error if refresh token is not found in the database', async () => {
-  //       await insertUsers([userOne]);
-  //       const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
-  //       const refreshToken = tokenService.generateToken(userOne._id, expires, tokenTypes.REFRESH);
+    test('should return 404 error if refresh token is not found in the database', async () => {
+      await insertUsers([userOne]);
+      const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
+      const refreshToken = tokenService.generateToken(userOne._id, expires, tokenTypes.REFRESH);
 
-  //       await request(app).post('/v1/auth/logout').send({ refreshToken }).expect(httpStatus.NOT_FOUND);
-  //     });
+      await request(app).post('/v1/auth/logout').send({ refreshToken }).expect(httpStatus.NOT_FOUND);
+    });
 
-  //     test('should return 404 error if refresh token is blacklisted', async () => {
-  //       await insertUsers([userOne]);
-  //       const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
-  //       const refreshToken = tokenService.generateToken(userOne._id, expires, tokenTypes.REFRESH);
-  //       await tokenService.saveToken(refreshToken, userOne._id, expires, tokenTypes.REFRESH, true);
+    test('should return 404 error if refresh token is blacklisted', async () => {
+      await insertUsers([userOne]);
+      const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
+      const refreshToken = tokenService.generateToken(userOne._id, expires, tokenTypes.REFRESH);
+      await tokenService.saveToken(refreshToken, userOne._id, expires, tokenTypes.REFRESH, true);
 
-  //       await request(app).post('/v1/auth/logout').send({ refreshToken }).expect(httpStatus.NOT_FOUND);
-  //     });
-  //   });
+      await request(app).post('/v1/auth/logout').send({ refreshToken }).expect(httpStatus.NOT_FOUND);
+    });
+  });
 
   //   describe('POST /v1/auth/refresh-tokens', () => {
   //     test('should return 200 and new auth tokens if refresh token is valid', async () => {
