@@ -1,4 +1,5 @@
 import logger from '../config/logger.js';
+import config from '../config/config.js';
 
 const errorHandler = (err, req, res, next) => {
   let { statusCode, message } = err;
@@ -10,9 +11,9 @@ const errorHandler = (err, req, res, next) => {
     code: statusCode,
     stack: err.stack,
   };
-
-  logger.error(err);
-
+  if (config.env === 'development') {
+    logger.error(err);
+  }
   res.status(statusCode).send(response);
 };
 
