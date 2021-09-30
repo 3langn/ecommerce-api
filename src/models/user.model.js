@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import { toJSON, paginate } from './plugins/index.js';
 
 import { roles } from '../config/roles.js';
+import logger from '../config/logger.js';
 
 const userSchema = mongoose.Schema(
   {
@@ -60,9 +61,9 @@ userSchema.statics.isEmailTaken = async function (userEmail) {
   return !!user;
 };
 
-userSchema.methods.isPasswordMatch = function (password) {
+userSchema.methods.isPasswordMatch = async function (password) {
   const user = this;
-  return bcrypt.compare(user.password, password);
+  return await bcrypt.compare(password, user.password);
 };
 userSchema.pre('save', async function (next) {
   const user = this;

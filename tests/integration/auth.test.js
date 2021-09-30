@@ -14,9 +14,9 @@ import { User, Token } from '../../src/models';
 import { roleRights } from '../../src/config/roles.js';
 import { tokenTypes } from '../../src/config/tokens.js';
 import { userOne, userTwo, admin, insertUsers } from '../fixtures/user.fixture.js';
-//import { userOneAccessToken, adminAccessToken } from '../fixtures/token.fixture.js';
+import { userOneAccessToken, adminAccessToken } from '../fixtures/token.fixture.js';
 import { jest } from '@jest/globals';
-//jest.useFakeTimers();
+import logger from '../../src/config/logger.js';
 
 setupTestDB();
 describe('Auth routes', () => {
@@ -83,53 +83,51 @@ describe('Auth routes', () => {
     });
   });
 
-  //   describe('POST /v1/auth/login', () => {
-  //     test('should return 200 and login user if email and password match', async () => {
-  //       await insertUsers([userOne]);
-  //       const loginCredentials = {
-  //         email: userOne.email,
-  //         password: userOne.password,
-  //       };
+  describe('POST /v1/auth/login', () => {
+    test('should return 200 and login user if email and password match', async () => {
+      await insertUsers([userOne]);
+      const loginCredentials = {
+        email: userOne.email,
+        password: userOne.password,
+      };
+      const res = await request(app).post('/v1/auth/login').send(loginCredentials).expect(httpStatus.OK);
+      expect(res.body.user).toEqual({
+        id: expect.anything(),
+        name: userOne.name,
+        email: userOne.email,
+        role: userOne.role,
+        isEmailVerified: userOne.isEmailVerified,
+      });
 
-  //       const res = await request(app).post('/v1/auth/login').send(loginCredentials).expect(httpStatus.OK);
+      expect(res.body.tokens).toEqual({
+        access: { token: expect.anything(), expires: expect.anything() },
+        refresh: { token: expect.anything(), expires: expect.anything() },
+      });
+    });
 
-  //       expect(res.body.user).toEqual({
-  //         id: expect.anything(),
-  //         name: userOne.name,
-  //         email: userOne.email,
-  //         role: userOne.role,
-  //         isEmailVerified: userOne.isEmailVerified,
-  //       });
+    test('should return 401 error if there are no users with that email', async () => {
+      const loginCredentials = {
+        email: userOne.email,
+        password: userOne.password,
+      };
 
-  //       expect(res.body.tokens).toEqual({
-  //         access: { token: expect.anything(), expires: expect.anything() },
-  //         refresh: { token: expect.anything(), expires: expect.anything() },
-  //       });
-  //     });
+      const res = await request(app).post('/v1/auth/login').send(loginCredentials).expect(httpStatus.UNAUTHORIZED);
 
-  //     test('should return 401 error if there are no users with that email', async () => {
-  //       const loginCredentials = {
-  //         email: userOne.email,
-  //         password: userOne.password,
-  //       };
+      expect(res.body).toEqual({ code: httpStatus.UNAUTHORIZED, message: 'Incorrect email or password' });
+    });
 
-  //       const res = await request(app).post('/v1/auth/login').send(loginCredentials).expect(httpStatus.UNAUTHORIZED);
+    test('should return 401 error if password is wrong', async () => {
+      await insertUsers([userOne]);
+      const loginCredentials = {
+        email: userOne.email,
+        password: 'wrongPassword1',
+      };
 
-  //       expect(res.body).toEqual({ code: httpStatus.UNAUTHORIZED, message: 'Incorrect email or password' });
-  //     });
+      const res = await request(app).post('/v1/auth/login').send(loginCredentials).expect(httpStatus.UNAUTHORIZED);
 
-  //     test('should return 401 error if password is wrong', async () => {
-  //       await insertUsers([userOne]);
-  //       const loginCredentials = {
-  //         email: userOne.email,
-  //         password: 'wrongPassword1',
-  //       };
-
-  //       const res = await request(app).post('/v1/auth/login').send(loginCredentials).expect(httpStatus.UNAUTHORIZED);
-
-  //       expect(res.body).toEqual({ code: httpStatus.UNAUTHORIZED, message: 'Incorrect email or password' });
-  //     });
-  //   });
+      expect(res.body).toEqual({ code: httpStatus.UNAUTHORIZED, message: 'Incorrect email or password' });
+    });
+  });
 
   //   describe('POST /v1/auth/logout', () => {
   //     test('should return 204 if refresh token is valid', async () => {
