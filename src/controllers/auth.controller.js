@@ -1,5 +1,4 @@
 import httpStatus from 'http-status';
-import logger from '../config/logger.js';
 
 import { userService, tokenService, authService, emailService } from '../services/index.js';
 import catchAsync from '../utils/catchAsync.js';
@@ -13,9 +12,8 @@ const register = catchAsync(async (req, res) => {
 const login = catchAsync(async (req, res) => {
   const { email, password } = req.body;
   const user = await authService.loginUserWithEmailAndPassword(email, password);
-  const token = await tokenService.generateAuthToken(user);
-
-  res.send({ user, token });
+  const tokens = await tokenService.generateAuthToken(user);
+  res.send({ user, tokens });
 });
 
 const logout = catchAsync(async (req, res) => {

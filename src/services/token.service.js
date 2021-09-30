@@ -19,8 +19,8 @@ const generateToken = (userId, expires, type, secret = config.jwt.secret) => {
   return jwt.sign(payload, secret);
 };
 
-const saveToken = async (token, userId, expires, type, blacklist = false) => {
-  const tokenDoc = await Token.create({ token, user: userId, expires: expires.toDate(), type, blacklist });
+const saveToken = async (token, userId, expires, type, blacklisted = false) => {
+  const tokenDoc = await Token.create({ token, user: userId, expires: expires.toDate(), type, blacklisted });
   return tokenDoc;
 };
 
@@ -72,4 +72,11 @@ const generateVerifyEmailToken = async (user) => {
   return verifyEmailToken;
 };
 
-export default { generateToken, generateAuthToken, generateVerifyEmailToken, verifyToken, generateResetPasswordToken };
+export default {
+  saveToken,
+  generateToken,
+  generateAuthToken,
+  generateVerifyEmailToken,
+  verifyToken,
+  generateResetPasswordToken,
+};

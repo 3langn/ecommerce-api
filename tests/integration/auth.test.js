@@ -7,17 +7,16 @@ import bcrypt from 'bcryptjs';
 import auth from '../../src/middleware/auth.js';
 import app from '../../src/app.js';
 import config from '../../src/config/config.js';
-import { tokenService, emailService } from '../../src/services';
+import { tokenService, emailService } from '../../src/services/index.js';
 import ApiError from '../../src/utils/ApiError.js';
 import setupTestDB from '../utils/setupTestDB';
 import { User, Token } from '../../src/models';
 import { roleRights } from '../../src/config/roles.js';
 import { tokenTypes } from '../../src/config/tokens.js';
 import { userOne, userTwo, admin, insertUsers } from '../fixtures/user.fixture.js';
-//import { userOneAccessToken, adminAccessToken } from '../fixtures/token.fixture.js';
+import { userOneAccessToken, adminAccessToken } from '../fixtures/token.fixture.js';
 import { jest } from '@jest/globals';
-//jest.useFakeTimers();
-
+import logger from '../../src/config/logger.js';
 setupTestDB();
 describe('Auth routes', () => {
   describe('POST /v1/auth/register', () => {
@@ -83,88 +82,86 @@ describe('Auth routes', () => {
     });
   });
 
-  //   describe('POST /v1/auth/login', () => {
-  //     test('should return 200 and login user if email and password match', async () => {
-  //       await insertUsers([userOne]);
-  //       const loginCredentials = {
-  //         email: userOne.email,
-  //         password: userOne.password,
-  //       };
+  describe('POST /v1/auth/login', () => {
+    test('should return 200 and login user if email and password match', async () => {
+      await insertUsers([userOne]);
+      const loginCredentials = {
+        email: userOne.email,
+        password: userOne.password,
+      };
+      const res = await request(app).post('/v1/auth/login').send(loginCredentials).expect(httpStatus.OK);
+      expect(res.body.user).toEqual({
+        id: expect.anything(),
+        name: userOne.name,
+        email: userOne.email,
+        role: userOne.role,
+        isEmailVerified: userOne.isEmailVerified,
+      });
 
-  //       const res = await request(app).post('/v1/auth/login').send(loginCredentials).expect(httpStatus.OK);
+      expect(res.body.tokens).toEqual({
+        access: { token: expect.anything(), expires: expect.anything() },
+        refresh: { token: expect.anything(), expires: expect.anything() },
+      });
+    });
 
-  //       expect(res.body.user).toEqual({
-  //         id: expect.anything(),
-  //         name: userOne.name,
-  //         email: userOne.email,
-  //         role: userOne.role,
-  //         isEmailVerified: userOne.isEmailVerified,
-  //       });
+    test('should return 401 error if there are no users with that email', async () => {
+      const loginCredentials = {
+        email: userOne.email,
+        password: userOne.password,
+      };
 
-  //       expect(res.body.tokens).toEqual({
-  //         access: { token: expect.anything(), expires: expect.anything() },
-  //         refresh: { token: expect.anything(), expires: expect.anything() },
-  //       });
-  //     });
+      const res = await request(app).post('/v1/auth/login').send(loginCredentials).expect(httpStatus.UNAUTHORIZED);
 
-  //     test('should return 401 error if there are no users with that email', async () => {
-  //       const loginCredentials = {
-  //         email: userOne.email,
-  //         password: userOne.password,
-  //       };
+      expect(res.body).toEqual({ code: httpStatus.UNAUTHORIZED, message: 'Incorrect email or password' });
+    });
 
-  //       const res = await request(app).post('/v1/auth/login').send(loginCredentials).expect(httpStatus.UNAUTHORIZED);
+    test('should return 401 error if password is wrong', async () => {
+      await insertUsers([userOne]);
+      const loginCredentials = {
+        email: userOne.email,
+        password: 'wrongPassword1',
+      };
 
-  //       expect(res.body).toEqual({ code: httpStatus.UNAUTHORIZED, message: 'Incorrect email or password' });
-  //     });
+      const res = await request(app).post('/v1/auth/login').send(loginCredentials).expect(httpStatus.UNAUTHORIZED);
 
-  //     test('should return 401 error if password is wrong', async () => {
-  //       await insertUsers([userOne]);
-  //       const loginCredentials = {
-  //         email: userOne.email,
-  //         password: 'wrongPassword1',
-  //       };
+      expect(res.body).toEqual({ code: httpStatus.UNAUTHORIZED, message: 'Incorrect email or password' });
+    });
+  });
 
-  //       const res = await request(app).post('/v1/auth/login').send(loginCredentials).expect(httpStatus.UNAUTHORIZED);
+  describe('POST /v1/auth/logout', () => {
+    test('should return 204 if refresh token is valid', async () => {
+      await insertUsers([userOne]);
+      const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
+      const refreshToken = tokenService.generateToken(userOne._id, expires, tokenTypes.REFRESH);
+      await tokenService.saveToken(refreshToken, userOne._id, expires, tokenTypes.REFRESH);
 
-  //       expect(res.body).toEqual({ code: httpStatus.UNAUTHORIZED, message: 'Incorrect email or password' });
-  //     });
-  //   });
+      await request(app).post('/v1/auth/logout').send({ refreshToken }).expect(httpStatus.NO_CONTENT);
 
-  //   describe('POST /v1/auth/logout', () => {
-  //     test('should return 204 if refresh token is valid', async () => {
-  //       await insertUsers([userOne]);
-  //       const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
-  //       const refreshToken = tokenService.generateToken(userOne._id, expires, tokenTypes.REFRESH);
-  //       await tokenService.saveToken(refreshToken, userOne._id, expires, tokenTypes.REFRESH);
+      const dbRefreshTokenDoc = await Token.findOne({ token: refreshToken });
+      expect(dbRefreshTokenDoc).toBe(null);
+    });
 
-  //       await request(app).post('/v1/auth/logout').send({ refreshToken }).expect(httpStatus.NO_CONTENT);
+    test('should return 400 error if refresh token is missing from request body', async () => {
+      await request(app).post('/v1/auth/logout').send().expect(httpStatus.BAD_REQUEST);
+    });
 
-  //       const dbRefreshTokenDoc = await Token.findOne({ token: refreshToken });
-  //       expect(dbRefreshTokenDoc).toBe(null);
-  //     });
+    test('should return 404 error if refresh token is not found in the database', async () => {
+      await insertUsers([userOne]);
+      const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
+      const refreshToken = tokenService.generateToken(userOne._id, expires, tokenTypes.REFRESH);
 
-  //     test('should return 400 error if refresh token is missing from request body', async () => {
-  //       await request(app).post('/v1/auth/logout').send().expect(httpStatus.BAD_REQUEST);
-  //     });
+      await request(app).post('/v1/auth/logout').send({ refreshToken }).expect(httpStatus.NOT_FOUND);
+    });
 
-  //     test('should return 404 error if refresh token is not found in the database', async () => {
-  //       await insertUsers([userOne]);
-  //       const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
-  //       const refreshToken = tokenService.generateToken(userOne._id, expires, tokenTypes.REFRESH);
+    test('should return 404 error if refresh token is blacklisted', async () => {
+      await insertUsers([userOne]);
+      const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
+      const refreshToken = tokenService.generateToken(userOne._id, expires, tokenTypes.REFRESH);
+      await tokenService.saveToken(refreshToken, userOne._id, expires, tokenTypes.REFRESH, true);
 
-  //       await request(app).post('/v1/auth/logout').send({ refreshToken }).expect(httpStatus.NOT_FOUND);
-  //     });
-
-  //     test('should return 404 error if refresh token is blacklisted', async () => {
-  //       await insertUsers([userOne]);
-  //       const expires = moment().add(config.jwt.refreshExpirationDays, 'days');
-  //       const refreshToken = tokenService.generateToken(userOne._id, expires, tokenTypes.REFRESH);
-  //       await tokenService.saveToken(refreshToken, userOne._id, expires, tokenTypes.REFRESH, true);
-
-  //       await request(app).post('/v1/auth/logout').send({ refreshToken }).expect(httpStatus.NOT_FOUND);
-  //     });
-  //   });
+      await request(app).post('/v1/auth/logout').send({ refreshToken }).expect(httpStatus.NOT_FOUND);
+    });
+  });
 
   //   describe('POST /v1/auth/refresh-tokens', () => {
   //     test('should return 200 and new auth tokens if refresh token is valid', async () => {

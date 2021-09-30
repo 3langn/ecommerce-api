@@ -5,14 +5,13 @@ import tokenService from './token.service.js';
 import userService from './user.service.js';
 import ApiError from '../utils/ApiError.js';
 import Token from '../models/token.model.js';
-import logger from '../config/logger.js';
 import pkg from 'jsonwebtoken';
+import logger from '../config/logger.js';
 const { TokenExpiredError } = pkg;
 
 const loginUserWithEmailAndPassword = async (email, password) => {
   const user = await userService.getUserByEmail(email);
-
-  if (!user || !user.isPasswordMatch(password)) {
+  if (!user || !(await user.isPasswordMatch(password))) {
     throw new ApiError(httpStatus.UNAUTHORIZED, 'Incorrect email or password');
   }
   return user;
@@ -31,7 +30,6 @@ const logout = async (refreshToken) => {
 const verifyEmail = async (verifyToken) => {
   try {
     const verifyTokenDoc = await tokenService.verifyToken(verifyToken, tokenTypes.VERIFY_EMAIL);
-    logger.debug(verifyToken);
 
     const user = await userService.getUserById(verifyTokenDoc.user);
     if (!user) {
