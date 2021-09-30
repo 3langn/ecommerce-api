@@ -1,8 +1,7 @@
 import dotenv from 'dotenv';
-import logger from '../config/logger.js';
 dotenv.config();
-
 export default {
+  env: process.env.NODE_ENV,
   port: process.env.PORT,
   mongoose: {
     url: process.env.MONGODB_URL,

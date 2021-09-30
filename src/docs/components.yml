@@ -52,6 +52,11 @@ components:
         rating: 5,
         numReviews: 10
 
+    Cart:
+      type: object
+      properties:
+        cartItems:
+          type: array
     Token:
       type: object
       properties:

@@ -1,4 +1,5 @@
 import httpStatus from 'http-status';
+import logger from '../config/logger.js';
 
 import { userService, tokenService, authService, emailService } from '../services/index.js';
 import catchAsync from '../utils/catchAsync.js';
