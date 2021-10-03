@@ -20,7 +20,7 @@ app.options('*', cors());
 app.use(passport.initialize());
 passport.use(jwtStrategy);
 
-app.use('/v1', routes);
+app.use(routes);
 
 app.use((req, res, next) => {
   next(new ApiError(httpStatus.NOT_FOUND, 'Not found'));
